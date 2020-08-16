@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cards task</title>
+
+ <!-- CSS only -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+<!-- JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+
+
+<body>
+    
+    <div class="container">
+        <div id="country-data"></div>
+    </div>
+
+     
+    <script>
+    var url = 'https://restcountries.eu/rest/v2/all';
+        var countryData = document.getElementById('country-data');
+        fetch(url)
+            .then(res => res.json())
+            .then(data => getRestCountries(data))
+            .catch(err => console.log("Error:", err));
+
+        function getRestCountries(param) {
+            var tags = '';
+            var count = 1;
+            var divRow = document.createElement('div');
+            for (var i = 0; i < param.length; i++) {
+
+                divRow.setAttribute('class', 'row mt-4');
+                var divCol = document.createElement('div');
+                divCol.setAttribute('class', 'col col-sm-2 col-md-4 col-lg-3 col-xl-3 mt-3');
+                tags = `
+                    <div class="card" style="height: 100%;">
+                        <div class="card-header">
+                           ${count}). ${param[i].name}
+                        </div>
+                        <img src="${param[i].flag}" id="${param[i].alpha2Code}" style="width: 100% !important;height: 40% !important;" class="card-img-top cust-card-img" alt="${param[i].name}">
+                        <div class="card-body">
+                            <p class="card-text">
+                                Capital: <span class="badge badge-success"> ${param[i].capital} </span><br>
+                                Country Codes: <span class="badge "> ${param[i].alpha2Code}, ${param[i].alpha3Code}</span><br>
+                                Region: <span class="badge "> ${param[i].region}</span>
+                            </p>
+                        </div>
+                        <div class="card-footer text-muted text-center">
+                            <button class="btn btn-sm btn-primary" data-toggle="alert" id="whoData" onclick="getWeatherData('${param[i].name}','${param[i].alpha2Code}')">View Current Weather</button>
+                        </div>
+                    </div>
+                    `;
+                count++;
+                divCol.innerHTML = tags;
+                divRow.appendChild(divCol);
+                countryData.appendChild(divRow);;
+            }
+        }
+
+        function getWeatherData(value, code) {
+            var urlValues = '';
+            var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q=";
+            var weatherAPIKey = '&appid=c3b4ef31feb237ca322297881c170281';
+            var weatherMetric = '&units=metric';
+            urlValues += weatherURL + value + ',' + code + weatherAPIKey + weatherMetric
+                
+
+            fetch(urlValues)
+                .then(res => res.json())
+                .then((data) => {
+                    alert("Weather"+ data.main.temp);
+                }).catch((err) => {
+                    alert("error");
+                    
+                });
+
+        }
+
+    </script>
+</body>
+</html>
